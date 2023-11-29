@@ -1,33 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <meta charset="utf-8" />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    
-    <body>
-        <div class="page" id="loginPage">
-            <main class="join-main">
-                <div class="form-control">
-                    <label for="nome">Qual seu nome?</label>
-                    <input type="text" id="loginNameInput" />
-                </div>
-    
-                <div class="form-control">
-                    <label for="room">Salas Disponíveis:</label>
-                    <select name="room" id="room">
-                        <option value="conversinha">Assuntos Livres</option>
-                        <option value="games">Sobre joguinhos</option>
-                        <option value="programming">Duvidas de programacao</option>
-                    </select>
-                </div>
-    
-                <button id="joinButton" class="btn">Entrar na sala</button>
-            </main>
-        </div>
-    
+
+    <div class="page" id="loginPage">
+        <main class="join-main">
+            <div class="form-control">
+                <label for="nome">Qual seu nome?</label>
+                <input type="text" id="loginNameInput" />
+            </div>
+
+            <div class="form-control">
+                <label for="room">Salas Disponíveis:</label>
+                <select name="room" id="room">
+                    <option value="conversinha">Assuntos Livres</option>
+                    <option value="games">Sobre joguinhos</option>
+                    <option value="programming">Dúvidas de programação</option>
+                </select>
+            </div>
+
+            <button id="joinButton" class="btn">Entrar na sala</button>
+        </main>
+    </div>
 
     <div class="page" id="chatPage">
         <div class="chatArea">
@@ -40,6 +39,22 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/json-rpc-ws.min.js"></script>
     <script src="/main.js"></script>
+
+    <script>
+        const socket = io();
+        const rpc = new JsonRpc("/rpc");  // Certifique-se de ajustar isso com a rota do seu servidor
+
+        rpc.connect(socket);
+
+        rpc.call("multiply", [5, 3], (err, result) => {
+            if (err) {
+                console.error("RPC Error:", err);
+            } else {
+                console.log("Result of multiply:", result);
+            }
+        });
+    </script>
 </body>
 </html>

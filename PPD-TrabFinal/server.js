@@ -2,18 +2,29 @@ const express = require("express");
 const path = require("path");
 const http = require("http");
 const socketIO = require("socket.io");
+const jsonrpc = require("json-rpc-ws");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-server.listen(3000);
-app.use(express.static(path.join(__dirname, "public")));
-let connectedUsers = [];
-let rooms = {};
+// Criação do servidor JSON-RPC
+const rpcServer = jsonrpc.createServer();
+
+rpcServer.addMethod("multiply", (params, callback) => {
+  if (params.length !== 2) {
+    return callback(jsonrpc.error(-32602, "Invalid params"));
+  }
+
+  const result = params[0] * params[1];
+  callback(null, result);
+});
+
+// Evento de conexão WebSocket para RPC
+rpcServer.attachTo(server);
 
 io.on("connection", (socket) => {
-  console.log("Conecção detectada");
+  console.log("Conexão detectada");
 
   socket.on("join-request", (username, room) => {
     if (!rooms[room]) {
@@ -53,3 +64,8 @@ io.on("connection", (socket) => {
     io.to(socket.room).emit("show-msg", obj);
   });
 });
+
+server.listen(3000);
+app.use(express.static(path.join(__dirname, "public")));
+let connectedUsers = [];
+let rooms = [];
