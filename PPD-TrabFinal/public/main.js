@@ -1,5 +1,16 @@
 // Cria uma instância do socket.io para comunicação via WebSocket.
 const socket = io();
+const rpc = new JsonRpc("/rpc");  // Certifique-se de ajustar isso com a rota do seu servidor
+
+rpc.connect(socket);
+
+rpc.call("multiply", [5, 3], (err, result) => {
+  if (err) {
+    console.error("RPC Error:", err);
+  } else {
+    console.log("Result of multiply:", result);
+  }
+});
 
 // Variáveis para armazenar o nome de usuário e a lista de usuários conectados.
 let username = "";
